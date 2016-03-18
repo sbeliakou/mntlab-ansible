@@ -1,0 +1,14 @@
+- name: MNT Lab Provision with Ansible
+  hosts: all
+
+  pre_tasks:
+  - debug: msg="Will do this"
+
+  roles:
+  - java
+  - jenkins
+  - tomcat
+  - web
+
+  tasks:
+  - debug: msg="That's it!"
