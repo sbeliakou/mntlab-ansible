@@ -14,7 +14,12 @@ public class HelloServlet extends HttpServlet {
     {
         PrintWriter out = response.getWriter(  );
         response.setContentType("text/html");
-        // Add details
+
+        String fileLocation = HelloServlet.class.getClassLoader().getResource("build_version.txt").getPath();
+        Path path = Paths.get(fileLocation);
+        String content = new String(Files.readAllBytes(path));
+        out.println(content);
+
         out.println("<img src='http://orig07.deviantart.net/763e/f/2008/366/a/0/homer_yahoo_by_danielgoettig.jpg'>");
     }
 }
