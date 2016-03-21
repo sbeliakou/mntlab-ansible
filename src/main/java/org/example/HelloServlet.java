@@ -21,8 +21,10 @@ public class HelloServlet extends HttpServlet {
 
         String fileLocation = HelloServlet.class.getClassLoader().getResource("build_version.txt").getPath();
         Path path = Paths.get(fileLocation);
-        String content = new String("<pre>" + Files.readAllBytes(path) + "</pre>");
+        String content = new String(Files.readAllBytes(path));
+        out.println("<pre>");
         out.println(content);
+        out.println("</pre>");
 
         out.println("<img src='http://orig07.deviantart.net/763e/f/2008/366/a/0/homer_yahoo_by_danielgoettig.jpg'>");
     }
