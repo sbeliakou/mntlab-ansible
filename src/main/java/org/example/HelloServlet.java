@@ -14,7 +14,7 @@ public class HelloServlet extends HttpServlet {
     {
         PrintWriter out = response.getWriter(  );
         response.setContentType("text/html");
-        out.println("<h1>%STUDENT_NAME%</h1>");
+        // Add details
         out.println("<img src='http://orig07.deviantart.net/763e/f/2008/366/a/0/homer_yahoo_by_danielgoettig.jpg'>");
     }
 }
