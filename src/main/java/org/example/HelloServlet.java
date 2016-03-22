@@ -19,20 +19,20 @@ public class HelloServlet extends HttpServlet {
         PrintWriter out = response.getWriter(  );
         response.setContentType("text/html");
 
-        String buildFileLocation = HelloServlet.class.getClassLoader().getResource("build-info.txt").getPath();
-        Path path = Paths.get(buildFileLocation);
-        String content = new String(Files.readAllBytes(path));
+        String buildInfoFileLocation = HelloServlet.class.getClassLoader().getResource("build-info.txt").getPath();
+        Path buildInfoPath = Paths.get(buildInfoFileLocation);
+        String buildInfoContent = new String(Files.readAllBytes(buildInfoPath));
         out.println("<pre>");
         out.println("BUILD DETAILS:");
-        out.println(content);
+        out.println(buildInfoContent);
         out.println("</pre>");
 
-        String deployFileLocation = HelloServlet.class.getClassLoader().getResource("deploy-info.txt").getPath();
-        Path path = Paths.get(deployFileLocation);
-        String content = new String(Files.readAllBytes(path));
+        String deployInfoFileLocation = HelloServlet.class.getClassLoader().getResource("deploy-info.txt").getPath();
+        Path deployInfoPath = Paths.get(deployInfoFileLocation);
+        String deployInfoContent = new String(Files.readAllBytes(deployInfoPath));
         out.println("<br><pre>");
         out.println("Deploy DETAILS:");
-        out.println(content);
+        out.println(deployInfoContent);
         out.println("</pre>");
 
         out.println("<img src='http://orig07.deviantart.net/763e/f/2008/366/a/0/homer_yahoo_by_danielgoettig.jpg'>");
