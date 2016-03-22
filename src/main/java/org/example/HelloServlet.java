@@ -23,7 +23,7 @@ public class HelloServlet extends HttpServlet {
         Path path = Paths.get(fileLocation);
         String content = new String(Files.readAllBytes(path));
         out.println("<pre>");
-        out.println("BUILD DETAILS:")
+        out.println("BUILD DETAILS:");
         out.println(content);
         out.println("</pre>");
 
@@ -31,7 +31,7 @@ public class HelloServlet extends HttpServlet {
         Path path = Paths.get(fileLocation);
         String content = new String(Files.readAllBytes(path));
         out.println("<br><pre>");
-        out.println("Deploy DETAILS:")
+        out.println("Deploy DETAILS:");
         out.println(content);
         out.println("</pre>");
 
