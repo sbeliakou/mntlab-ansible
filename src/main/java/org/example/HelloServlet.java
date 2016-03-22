@@ -27,7 +27,7 @@ public class HelloServlet extends HttpServlet {
         out.println(buildInfoContent);
         out.println("</pre>");
 
-        String deployInfoFileLocation = HelloServlet.class.getClassLoader().getResource("deploy-info.txt").getPath();
+        String deployInfoFileLocation = "/var/lib/tomcat/webapps/deploy-info.txt";
         Path deployInfoPath = Paths.get(deployInfoFileLocation);
         String deployInfoContent = new String(Files.readAllBytes(deployInfoPath));
         out.println("<pre>");
