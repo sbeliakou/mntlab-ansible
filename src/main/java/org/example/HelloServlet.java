@@ -19,10 +19,19 @@ public class HelloServlet extends HttpServlet {
         PrintWriter out = response.getWriter(  );
         response.setContentType("text/html");
 
-        String fileLocation = HelloServlet.class.getClassLoader().getResource("build_version.txt").getPath();
+        String fileLocation = HelloServlet.class.getClassLoader().getResource("build-info.txt").getPath();
         Path path = Paths.get(fileLocation);
         String content = new String(Files.readAllBytes(path));
         out.println("<pre>");
+        out.println("BUILD DETAILS:")
+        out.println(content);
+        out.println("</pre>");
+
+        String fileLocation = HelloServlet.class.getClassLoader().getResource("deploy-info.txt").getPath();
+        Path path = Paths.get(fileLocation);
+        String content = new String(Files.readAllBytes(path));
+        out.println("<br><pre>");
+        out.println("Deploy DETAILS:")
         out.println(content);
         out.println("</pre>");
 
