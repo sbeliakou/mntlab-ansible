@@ -30,7 +30,7 @@ public class HelloServlet extends HttpServlet {
         String deployInfoFileLocation = HelloServlet.class.getClassLoader().getResource("deploy-info.txt").getPath();
         Path deployInfoPath = Paths.get(deployInfoFileLocation);
         String deployInfoContent = new String(Files.readAllBytes(deployInfoPath));
-        out.println("<br><pre>");
+        out.println("<pre>");
         out.println("Deploy DETAILS:");
         out.println(deployInfoContent);
         out.println("</pre>");
