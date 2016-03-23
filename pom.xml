@@ -4,7 +4,7 @@
   <groupId>org.example</groupId>
   <artifactId>mnt-lab</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.${buildNumber}</version>
   <name>mnt-lab Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
