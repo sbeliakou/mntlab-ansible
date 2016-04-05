@@ -1,0 +1,51 @@
+---
+# tasks file for jenkins
+- debug: msg="installing jenkins"
+
+- name: install the latest version of git
+  yum: name=git state=latest
+
+- name: download maven
+  get_url: url=http://ftp.byfly.by/pub/apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz dest=/opt/apache-maven-3.3.9-bin.tar.gz
+
+- name: extract maven archive
+  unarchive: src=/opt/apache-maven-3.3.9-bin.tar.gz dest=/opt/ copy=no creates=/opt/apache-maven-3.3.9
+
+- name: copy the jenkins repository
+  copy: src=jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
+
+- name: import key for jenkins
+  rpm_key: state=present key=https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+
+- name: install jenkins
+  yum: name=jenkins state=present
+
+- name: create file in sudoers
+  copy: src=jenkins dest=/etc/sudoers.d/
+
+- name: config xml jenkins
+  template: src=config.xml dest=/var/lib/jenkins/
+  sudo: True
+
+- name: config prefix for jenkins
+  template: src=jenkins dest=/etc/sysconfig/
+
+- name: maven config for jenkins
+  copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins/
+  sudo: True
+
+- name: jobs for jenkins
+  copy: src=jobs dest=/var/lib/jenkins/
+  sudo: True
+
+- name: plugins for jenkins
+  command: cp -R /vagrant/plugins /var/lib/jenkins/
+
+- name: changing owner of jenkins home
+  file: path=/var/lib/jenkins/ owner=jenkins group=jenkins state=directory recurse=yes
+
+- name: start jenkins
+  service: name=jenkins state=started enabled=yes
+
+
