@@ -1,25 +1,25 @@
-Ansible
-What is Ansible
+# Ansible
+## What is Ansible
 
-    Application Deployment
-    Multi-Tier Orchectration
-    Configuration Managment
+* Application Deployment
+* Multi-Tier Orchectration
+* Configuration Managment
 
-Ansible features
+## Ansible features
 
-    Agent-less architecture
-    No custom PKI-SSH-based
-    Configuration as data, not code
-    Batteries-included
-    Full configuration managment, orchestration, and deployment
+* Agent-less architecture
+* No custom PKI-SSH-based
+* Configuration as data, not code
+* Batteries-included
+* Full configuration managment, orchestration, and deployment
 
-Provisioning
+## Provisioning
 
-The final version of provisioning is under ansible2 directory with 4 roles available: java, jenkins (can be installed separately), tomcat (can be installed separately), app. There are default variables defined in group_vars. Dependencies:
+The final version of provisioning is under [ansible.2](vagrant/ansible.2/) directory with 4 roles available: [java](vagrant/ansible.2/roles/java/), [jenkins](/vagrant/ansible.2/roles/jenkins/) (can be installed separately), [tomcat](/vagrant/ansible.2/roles/tomcat/) (can be installed separately), [app](/vagrant/ansible.2/roles/app/). There are default variables defined in [group_vars](/vagrant/ansible.2/group_vars/). Dependencies:
 
-    app invokes jenkins and tomcat (with predefined parameters in provision.yml);
-    jenkins invokes java;
-    tomcat invokes java;
+* app invokes jenkins and tomcat (with predefined parameters in [provision.yml](/vagrant/ansible.2/provision.yml));
+* jenkins invokes java;
+* tomcat invokes java;
 
 ├── group_vars
 │   └── all
