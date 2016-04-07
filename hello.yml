@@ -1,0 +1,7 @@
+#!/usr/bin/env ansible-playbook
+- name: Hello World Playbook
+  hosts: all
+
+  tasks:
+  - name: Say Hello
+    shell: echo Hello World
