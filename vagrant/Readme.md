@@ -20,7 +20,7 @@ The final version of provisioning is under [ansible.2](/vagrant/ansible.2/) dire
 * app invokes jenkins and tomcat (with predefined parameters in [provision.yml](/vagrant/ansible.2/provision.yml));
 * jenkins invokes java;
 * tomcat invokes java;
-
+```
 ├── group_vars
 │   └── all
 ├── provision.retry
@@ -110,4 +110,4 @@ The final version of provisioning is under [ansible.2](/vagrant/ansible.2/) dire
         │   └── test.yml
         └── vars
             └── main.yml
-
+```
