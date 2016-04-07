@@ -15,7 +15,7 @@
 
 ## Provisioning
 
-The final version of provisioning is under [ansible.2](vagrant/ansible.2/) directory with 4 roles available: [java](vagrant/ansible.2/roles/java/), [jenkins](/vagrant/ansible.2/roles/jenkins/) (can be installed separately), [tomcat](/vagrant/ansible.2/roles/tomcat/) (can be installed separately), [app](/vagrant/ansible.2/roles/app/). There are default variables defined in [group_vars](/vagrant/ansible.2/group_vars/). Dependencies:
+The final version of provisioning is under [ansible.2](/vagrant/ansible.2/) directory with 4 roles available: [java](/vagrant/ansible.2/roles/java/), [jenkins](/vagrant/ansible.2/roles/jenkins/) (can be installed separately), [tomcat](/vagrant/ansible.2/roles/tomcat/) (can be installed separately), [app](/vagrant/ansible.2/roles/app/). There are default variables defined in [group_vars](/vagrant/ansible.2/group_vars/). Dependencies:
 
 * app invokes jenkins and tomcat (with predefined parameters in [provision.yml](/vagrant/ansible.2/provision.yml));
 * jenkins invokes java;
