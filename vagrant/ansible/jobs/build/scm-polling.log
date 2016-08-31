@@ -1,5 +1,0 @@
-Started on 31-Aug-2016 21:00:00
-Using strategy: Default
-[poll] Last Built Revision: Revision b88c8867b86aa13768fc084b7d2d9c44a37391f1 (refs/remotes/origin/aliaksandr_karavai)
- > git --version # timeout=10
- > git ls-remote -h https://github.com/MNTLab/cm-ansible-1.git # timeout=10
