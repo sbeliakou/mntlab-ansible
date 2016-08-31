@@ -15,6 +15,10 @@
     yum:
       name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
   
+  - name: tar | Installing tar
+    yum:
+      name: tar
+      state: installed
   
   - name: NGINX | Installing NGINX
     yum:
@@ -26,16 +30,39 @@
     yum: 
       name: java-1.7.0-openjdk-devel
       state: installed  
-  - name: Installing tomcat
-    yum:
-      name: tomcat
-      state: installed
-      
+  - name: add group "tomcat"
+    group: name=tomcat
+  - name: add user "tomcat"
+    user: name=tomcat group=tomcat home=/opt/apache createhome=no
+    become: True
+    become_method: sudo
+  
+  - name: Download Tomcat
+    get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.8/bin/apache-tomcat-7.0.8.tar.gz dest=/opt/apache-tomcat-7.0.8.tar.gz
+  - name: unpack tomcat    
+    unarchive: src=/opt/apache-tomcat-7.0.8.tar.gz dest=/opt remote_src=no
+    
+
+  #- name: Extract archive
+  #  command: chdir=/opt tar xvf /opt/apache-tomcat-7.0.8.tar.gz creates=/opt/apache-tomcat-7.0.8
+   # unarchive: src=/opt/apache-tomcat-7.0.8.tar.gz dest=/opt/apache-tomcat-7.0.8 remote_src=yes
+
+  - name: Symlink install directory
+    file: src=/opt/apache-tomcat-7.0.8 path=/usr/share/tomcat state=link
+  - debug: msg="tomcat start 7 install"  
+  
+ #- name: creating tomcat home dir
+ #   file: path=/opt/apache/ owner=tomcat group=tomcat state=directory recurse=yes
+ 
   - name: Changing ports for tomcat
     copy: src=server.xml dest=/usr/share/tomcat/conf/server.xml
-
+#command: sed -i.bac 's/"8080"/"9090"/g' /usr/share/tomcat/conf/server.xml
   - name: Changing users for tomcat
     copy: src=tomcat-users.xml dest=/usr/share/tomcat/conf/tomcat-users.xml
+  - name: Install Tomcat init script
+    copy: src=tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
+  - name: Change ownership of Tomcat installation
+    file: path=/usr/share/tomcat/ owner=tomcat group=tomcat state=directory recurse=yes
   - name: Start Tomcat
     service: name=tomcat state=started enabled=yes 
   
