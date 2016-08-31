@@ -3,4 +3,5 @@
 Home Task
 ---
 [provision.yml](vagrant/ansible/provision.yml)
+![gomer](/https://github.com/MNTLab/cm-ansible-1/blob/yury_muski/vagrant/ansible/resource/gomer.png?raw=true)
 
