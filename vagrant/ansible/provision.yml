@@ -29,6 +29,9 @@
     yum:
       name: nginx
 
+  - name: NGINX | place config
+    copy: src=resources/nginx/vhost.conf dest=/etc/nginx/conf.d/
+
   - name: NGINX | start nginx
     service:
       name: nginx
@@ -44,10 +47,10 @@
     file: src=/opt/apache-tomcat-7.0.70 path=/usr/share/tomcat state=link
 
   - name: TOMCAT | place server.xml
-    copy: src=resources/server.xml dest=/opt/apache-tomcat-7.0.70/conf/
+    copy: src=resources/tomcat/server.xml dest=/opt/apache-tomcat-7.0.70/conf/server.xml
 
   - name: TOMCAT | init script
-    copy: src=resources/tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
+    copy: src=resources/tomcat/tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
 
   - name: TOMCAT | start tomcat
     service: name=tomcat state=started enabled=yes
@@ -60,6 +63,18 @@
 
   - name: JENKINS | install
     yum: name=jenkins state=latest
+
+  - name: Copying Jenkins config.xml
+    copy: src=resources/jenkins/config.xml dest=/var/lib/jenkins/ force=no
+
+  - name: Copying Maven config for Jenkins
+    copy: src=resources/jenkins/hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+
+  - name: Jobs for Jenkins
+    copy: src=resources/jenkins/jobs dest=/var/lib/jenkins/ force=no
+
+  - name: Plugins for Jenkins
+    copy: src=resources/jenkins/plugins dest=/var/lib/jenkins/ force=no
 
   - name: JENKINS | start jenkins
     service:
