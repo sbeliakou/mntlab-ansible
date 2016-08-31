@@ -1,0 +1,9 @@
+Started on 31-Aug-2016 20:20:00
+Using strategy: Default
+[poll] Last Built Revision: Revision 3e58a7ff21b2bf6b37c4f6f87458249367ccafbe (refs/remotes/origin/Andrei_Kachan)
+ > git --version # timeout=10
+ > git ls-remote -h https://github.com/MNTLab/cm-ansible-1 # timeout=10
+Found 17 remote heads on https://github.com/MNTLab/cm-ansible-1
+[poll] Latest remote head revision on refs/heads/Andrei_Kachan is: 3e58a7ff21b2bf6b37c4f6f87458249367ccafbe - already built by 5
+Done. Took 1.4 sec
+No changes
