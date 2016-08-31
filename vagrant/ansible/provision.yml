@@ -2,20 +2,49 @@
   hosts: all
   become: yes
 
-  vars:
-    services_info: |
-      Jenkins URL - http://localhost:8080/jenkins/
-      Jenkins Delivery - http://localhost:8080/jenkins/view/Pet%20CD/
-      Application URL - http://localhost:8080/mnt-lab/
-
   pre_tasks:
   - debug: msg="Let's do this"
 
-  roles:
-  - java
-  - jenkins
-  - tomcat
-  - web
-
-  post_tasks:
-  - debug: var=services_info.split('\n')
+  tasks:
+  - name: Java install
+    yum: name=java-1.7.0-openjdk-devel state=installed
+  - name: Nginx repo install
+    yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+  - name: Nginx install
+    yum: name=nginx state=latest
+  - name: Tomcat install
+    yum: name=tomcat state=latest
+  - name: tomcat-webapps install
+    yum: name=tomcat-webapps state=latest
+  - name: Install git
+    yum: name=git state=latest
+  - name: Jenkins repo
+    command: wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+  - name: Jenkins rpm
+    command: rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+  - name: Jenkins install
+    yum: name=jenkins state=latest
+  - name: Nginx config
+    template: src=resource/default.conf dest=/etc/nginx/conf.d/default.conf
+  - name: Tomcat config
+    template: src=resource/server.xml dest=/etc/tomcat/server.xml
+  - name: Jenkins config
+    template: src=resource/jenkins dest=/etc/sysconfig/jenkins
+  - name: Jenkins config2
+    template: src=resource/config.xml dest=/var/lib/jenkins/config.xml
+  - name: Jenkins jobs
+    copy: src=resource/jobs dest=/var/lib/jenkins/ force=no
+  - name: Jenkins plugins
+    copy: src=resource/plugins dest=/var/lib/jenkins/ force=no
+  - name: Jenkins maven
+    copy: src=resource/hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+  - name: Jenkins chown
+    command: chown -R jenkins:jenkins /var/lib/jenkins
+  - name: Jenkins sudo
+    copy: src=resource/jenkins-user dest=/etc/sudoers.d/ force=no
+  - name: starting nginx
+    service: name=nginx state=running
+  - name: starting tomcat
+    service: name=tomcat state=running
+  - name: starting jenkins
+    service: name=jenkins state=running
