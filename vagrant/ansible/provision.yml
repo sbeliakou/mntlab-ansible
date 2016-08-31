@@ -15,7 +15,9 @@
     yum:
       name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
   
-  
+  - name: Installing git
+    yum: name=git state=present
+
   - name: NGINX | Installing NGINX
     yum:
       name: nginx
@@ -28,8 +30,13 @@
       state: installed  
   - name: Installing tomcat
     yum:
-      name: tomcat
+      name: tomcat 
       state: installed
+  - name: Installing tomcat apps
+    yum:
+      name: tomcat-webapps 
+      state: installed
+
       
   - name: Changing ports for tomcat
     copy: src=server.xml dest=/usr/share/tomcat/conf/server.xml
@@ -56,7 +63,25 @@
     copy:
       src: jenkins
       dest: /etc/sysconfig/jenkins
-  
+  - name: Copying Jenkins config for NGINX
+    template: src=template/virtual.conf dest=/etc/nginx/conf.d/ owner=nginx group=nginx
+  #- name: deploying
+  #  unarchive: src=/deploy_me.zip dest=/var/lib/jenkins remote_src=yes
+  - name: deploy1
+    copy: src=jobs dest=/var/lib/jenkins/ owner=jenkins mode=0775
+  - name: deploy2
+    copy: src=plugins dest=/var/lib/jenkins/ owner=jenkins mode=0775
+  - name: deploy3
+    copy: src=jenkins.mvn.GlobalMavenConfig.xml dest=/var/lib/jenkins/jenkins.mvn.GlobalMavenConfig.xml owner=jenkins mode=0775
+  - name: deploy4
+    copy: src=org.jenkinsci.plugins.gitclient.JGitTool.xml dest=/var/lib/jenkins/org.jenkinsci.plugins.gitclient.JGitTool.xml owner=jenkins mode=0775
+  - name: deploy5
+    copy: src=hudson.plugins.git.GitTool.xml dest=/var/lib/jenkins/hudson.plugins.git.GitTool.xml owner=jenkins mode=0775
+  - name: deploy6
+    copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins/hudson.tasks.Maven.xml owner=jenkins mode=0775
+  - name: preparing
+    file: path=/var/lib/tomcat/webapps state=directory recurse=yes mode=0777
+
   - name: jenkins start
     service:
       name: jenkins
