@@ -1,0 +1,80 @@
+- name: Hello, Anton!
+  hosts: all
+
+  tasks:
+  - shell: echo "Hello ansible"
+
+  - name: Install nginx
+    yum: name=nginx state=latest
+    sudo: yes
+
+  - name: Copy config
+    template: src=test/default.conf dest=/etc/nginx/conf.d/default.conf
+    sudo: yes
+
+  - name: Install java 1.7
+    yum: name=java-1.7.0-openjdk-devel.x86_64 state=present
+    sudo: yes
+
+  - name: Install tomcat
+    yum: name=tomcat state=present
+    sudo: yes
+
+  - name: Copy server.xml
+    template: src=test/server.xml dest=/etc/tomcat/server.xml
+    sudo: yes
+
+  - name: Install tomcat-webapps
+    yum: name=tomcat-webapps state=present
+    sudo: yes
+
+  - name: Start nginx
+    service: name=nginx state=running
+    sudo: yes
+
+  - name: Start tomcat
+    service: name=tomcat state=running
+    sudo: yes
+
+  - shell: sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+  - shell: sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+  - name: install jenkins
+    yum: name=jenkins state=present
+    sudo: yes
+
+  - name: Copy jenkins conf
+    template: src=test/jenkins dest=/etc/sysconfig/jenkins
+    sudo: yes
+  
+  - name: Copy jenkins conf.xml
+    template: src=test/config.xml dest=/var/lib/jenkins/config.xml
+    sudo: yes    
+
+  - name: Jobs for Jenkins
+    copy: src=jobs dest=/var/lib/jenkins/ force=no
+    sudo: yes
+
+  - name: Plugins for Jenkins
+    copy: src=plugins dest=/var/lib/jenkins/ force=no 
+    sudo: yes
+
+  - name: Copying Maven config for Jenkins
+    copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+    sudo: yes
+  
+  - name: Changing Jenkins home directory ownership
+    file: path=/var/lib/jenkins owner=jenkins group=jenkins state=directory recurse=yes
+    sudo: yes
+
+  - name: Install git 
+    yum: name=git state=present
+    sudo: yes 
+  
+  - name: Edit sudoers
+    copy: src=jenkins-user dest=/etc/sudoers.d/ force=no
+    sudo: yes
+
+  - name: Start jenkins
+    service: name=jenkins state=running
+    sudo: yes

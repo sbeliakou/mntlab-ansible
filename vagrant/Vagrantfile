@@ -4,6 +4,7 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "sbeliakou/centos-6.7-x86_64"
   config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 10100, host:10100
 
   config.vm.hostname = "pet"
   
@@ -12,7 +13,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = 'ansible/provision.yml'
+    ansible.playbook = 'vagrant.yml'
     ansible.verbose = 'vv'
   end
 end
