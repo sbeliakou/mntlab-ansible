@@ -1,0 +1,4 @@
+---
+ - debug: msg="Will install Java"
+ - name: Ensure Java is installed.
+ yum: "name=java-1.7.0-openjdk-devel state=installed"

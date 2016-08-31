@@ -1,7 +1,7 @@
 - name: Provision with Ansible
   hosts: all
   become: yes
-
+  
   vars:
     services_info: |
       Jenkins URL - http://localhost:8080/jenkins/
@@ -11,11 +11,53 @@
   pre_tasks:
   - debug: msg="Let's do this"
 
-  roles:
-  - java
-  - jenkins
-  - tomcat
-  - web
+  tasks:
+  - debug: msg="Will install Java"
+  - name: Ensure Java is installed.
+    yum: name=java-1.7.0-openjdk-devel state=installed
+  - debug: msg="Will set nginx repo"
+  - name: NGINX | Installing NGINX repo rpm
+    yum:
+      name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+  - debug: msg="Will install NGINX"
+  - name: NGINX | Installing NGINX repo rpm
+    yum:
+      name: nginx
+      state: latest
+  - debug: msg="Will start NGINX"  
+  - name: Copying config
+    template: src=src/vhosts.conf dest=/etc/nginx/conf.d/vhosts.conf
+    template: src=src/jenkins dest=/etc/sysconfig/jenkins
+  - name: NGINX | Starting NGINX
+    service:
+      name: nginx
+      state: started
+  - debug: msg="Will install tomcat"
+  - name: Install tomcat
+    yum: name=tomcat state=latest 
+    yum: name=tomcat-webapps state=latest
+  - name: Copying config
+    template: src=src/server.xml dest=/usr/share/tomcat/conf/server.xml  
+  - name: Start tomcat
+    service: name=tomcat state=started enabled=yes
+  - name: jenkins wget
+    command: wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+  - name: jenkins rpm
+    command: rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+  - name: jenkins install
+    yum: name=jenkins
+  - name: Copying config
+    copy: src=src/plugins dest=/var/lib/jenkins/plugins/
+  - name: Start jenkins
+    service:
+      name: jenkins
+      state: started
+      enabled: yes
+#  roles:
+#  - java
+#  - jenkins
+#  - tomcat
+#  - web
 
   post_tasks:
   - debug: var=services_info.split('\n')
