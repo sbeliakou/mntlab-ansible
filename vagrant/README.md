@@ -10,3 +10,8 @@
    - [hudson.tasks.Maven.xml](/vagrant/hudson.tasks.Maven.xml) - correct starting maven 
    - [jenkins-user](/vagrant/jenkins-user) - add user rights
    
+![alt text](https://github.com/MNTLab/cm-ansible-1/blob/anton_tkachenka/vagrant/test/01.png "http://localhost/sample")
+![alt text](https://github.com/MNTLab/cm-ansible-1/blob/anton_tkachenka/vagrant/test/03-1.png "http://localhost/sample")
+![alt text](https://github.com/MNTLab/cm-ansible-1/blob/anton_tkachenka/vagrant/test/03-2.png "http://localhost/sample")
+![alt text](https://github.com/MNTLab/cm-ansible-1/blob/anton_tkachenka/vagrant/test/04.png "http://localhost/sample")
+![alt text](https://github.com/MNTLab/cm-ansible-1/blob/anton_tkachenka/vagrant/test/05.png "http://localhost/sample")
