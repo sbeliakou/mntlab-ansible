@@ -4,7 +4,7 @@
 4. Additional files:
    - [default.conf](/vagrant/test/default.conf) - configuration for nginx
    - [server.xml](/vagrant/test/server.xml) - configuration for tomcat
-   - [config.xml](/vagrant/test/config.xml) and ([jenkins](vagrant/jenkins)) - configuration for jenkins
-   - [plugins for jenkins](vagrant/plugins)
-   - [jobs for jenkins](vagrant/jobs)
+   - [config.xml](/vagrant/test/config.xml) and [jenkins](vagrant/test/jenkins) - configuration for jenkins
+   - [plugins for jenkins](vagrant/plugins/)
+   - [jobs for jenkins](vagrant/jobs/)
    
