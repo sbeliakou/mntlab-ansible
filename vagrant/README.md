@@ -4,7 +4,9 @@
 4. Additional files:
    - [default.conf](/vagrant/test/default.conf) - configuration for nginx
    - [server.xml](/vagrant/test/server.xml) - configuration for tomcat
-   - [config.xml](/vagrant/test/config.xml) and [jenkins](vagrant/test/jenkins) - configuration for jenkins
-   - [plugins for jenkins](vagrant/plugins/)
-   - [jobs for jenkins](vagrant/jobs/)
+   - [config.xml](/vagrant/test/config.xml) and [jenkins](/vagrant/test/jenkins) - configuration for jenkins
+   - [plugins for jenkins](/vagrant/plugins/)
+   - [jobs for jenkins](/vagrant/jobs/)
+   - [hudson.tasks.Maven.xml](/vagrant/hudson.tasks.Maven.xml) - correct starting maven 
+   - [jenkins-user](/vagrant/jenkins-user) - add user rights
    
