@@ -1,21 +1,84 @@
 - name: Provision with Ansible
   hosts: all
   become: yes
-
   vars:
-    services_info: |
-      Jenkins URL - http://localhost:8080/jenkins/
-      Jenkins Delivery - http://localhost:8080/jenkins/view/Pet%20CD/
-      Application URL - http://localhost:8080/mnt-lab/
+    nginx_repo: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    http_port: 9080
+    nginx_port: 8080
 
-  pre_tasks:
-  - debug: msg="Let's do this"
+  tasks:
+# install nginx, git by yum (latest)
+   - name: NGINX install rpm in yum
+     yum: name={{ nginx_repo }}
 
-  roles:
-  - java
-  - jenkins
-  - tomcat
-  - web
+   - name: NGINX GIT install
+     yum: name='{{ item }}' state=latest
+     with_items:
+         - nginx
+         - git
+     notify: enabled nginx
 
-  post_tasks:
-  - debug: var=services_info.split('\n')
+#install java, tomcat, webapps by yum (present)
+   - name: TOMCAT JAVA install
+     yum: name='{{ item }}' state=present
+     with_items:
+       - java-1.7.0-openjdk-devel 
+       - tomcat
+       - tomcat-webapps
+     notify: enabled tomcat
+
+#install maven by unarchive
+   - name: MAVEN install 
+     unarchive: src=http://ftp.byfly.by/pub/apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz dest=/opt/ copy=no
+
+# copy configuration file for tomcat, nginx
+   - name: TOMCAT NGINX copy config
+     template:
+        src={{item.filename}}
+        dest={{item.dest}}
+     with_items:
+       - {filename: "server.xml", dest: "/etc/tomcat/server.xml"}
+       - {filename: "default.conf", dest: "/etc/nginx/conf.d/default.conf"}
+     notify:
+        - enabled tomcat
+        - enabled nginx
+
+# all for jenkins
+   - name: JENKINS add repo
+     get_url: url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
+
+   - name: JENKINS add key
+     command: rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+   - name: JENKINS install
+     yum: name=jenkins state=latest
+
+   - name: JENKINS copy all configs
+     template:
+        src={{item.filename}}
+        dest={{item.dest}}
+     with_items:
+        - {filename: "jenkins", dest: "/etc/sysconfig/jenkins"}
+        - {filename: "config.xml", dest: "/var/lib/jenkins/config.xml"}
+        - {filename: "jenkins-user", dest: "/etc/sudoers.d/"}
+        - {filename: "hudson.tasks.Maven.xml", dest: "/var/lib/jenkins/"}
+
+   - name: JENKINS copy jobs and plugins
+     copy:
+        src={{item}}
+        dest=/var/lib/jenkins/
+     with_items:
+        - jobs
+        - plugins
+
+   - name: JENKINS chown
+     command: chown -R jenkins.jenkins /var/lib/jenkins
+     notify: enabled jenkins
+
+  handlers:
+    - name: enabled nginx
+      service: name=nginx state=reloaded enabled=yes
+    - name: enabled tomcat
+      service: name=tomcat state=reloaded enabled=yes
+    - name: enabled jenkins
+      service: name=jenkins state=reloaded enabled=yes
