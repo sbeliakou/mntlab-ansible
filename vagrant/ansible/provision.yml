@@ -31,11 +31,10 @@
      - copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins
      - file: path=/var/lib/jenkins owner=jenkins group=jenkins recurse=yes
      - file: path=/var/lib/tomcat/webapps mode=0777
+     - name: JENKINS | Starting Jenkins
+       service: name=jenkins state=running
   handlers:
      - name: nginx enabled
        service: name=nginx state=running enabled=yes
      - name: tomcat enabled
        service: name=tomcat state=running enabled=yes
-     - name: jenkins enabled
-       service: name=jenkins state=running enabled=yes
-
