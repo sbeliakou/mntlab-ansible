@@ -21,7 +21,10 @@
   - name: JAVA | install
     yum: name=java-1.7.0-openjdk-devel
 
-  - name: REPO | add nginx-repo
+  - name: GIT | install
+    yum: name=git state=latest
+
+  - name: NGINX | add nginx-repo
     yum:
       name: http://nginx.org/packages/rhel/6/noarch/RPMS/nginx-release-rhel-6-0.el6.ngx.noarch.rpm
 
@@ -37,20 +40,14 @@
       name: nginx
       state: started
 
-  - name: TOMCAT | download and unarchive
-    unarchive: src=http://ftp.byfly.by/pub/apache.org/tomcat/tomcat-7/v7.0.70/bin/apache-tomcat-7.0.70.tar.gz
-               dest=/opt
-               remote_src=yes
-               copy=no
+  - name: TOMCAT | install tomcat
+    yum: name=tomcat
 
-  - name: TOMCAT | symlink install directory
-    file: src=/opt/apache-tomcat-7.0.70 path=/usr/share/tomcat state=link
+  - name: TOMCAT | install tomcat-webapps
+    yum: name=tomcat-webapps
 
   - name: TOMCAT | place server.xml
-    copy: src=resources/tomcat/server.xml dest=/opt/apache-tomcat-7.0.70/conf/server.xml
-
-  - name: TOMCAT | init script
-    copy: src=resources/tomcat/tomcat-initscript.sh dest=/etc/init.d/tomcat mode=0755
+    copy: src=resources/tomcat/server.xml dest=/etc/tomcat/server.xml
 
   - name: TOMCAT | start tomcat
     service: name=tomcat state=started enabled=yes
@@ -64,17 +61,26 @@
   - name: JENKINS | install
     yum: name=jenkins state=latest
 
-  - name: Copying Jenkins config.xml
-    copy: src=resources/jenkins/config.xml dest=/var/lib/jenkins/ force=no
+  - name: JENKINS | copy config.xml
+    copy: src=resources/jenkins/config.xml dest=/var/lib/jenkins/config.xml force=no
 
-  - name: Copying Maven config for Jenkins
+  - name: JENKINS | copy jenkins config
+    copy: src=resources/jenkins/jenkins dest=/etc/sysconfig/jenkins
+
+  - name: JENKINS | copy maven plugin
     copy: src=resources/jenkins/hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
 
-  - name: Jobs for Jenkins
+  - name: JENKINS | copy jobs
     copy: src=resources/jenkins/jobs dest=/var/lib/jenkins/ force=no
 
-  - name: Plugins for Jenkins
+  - name: JENKINS | copy plugins
     copy: src=resources/jenkins/plugins dest=/var/lib/jenkins/ force=no
+
+  - name: JENKINS | chown jenkins folder
+    command: chown -R jenkins:jenkins /var/lib/jenkins
+
+  - name: JENKINS | make user jenkins sudoer
+    copy: src=resources/jenkins/jenkins-user dest=/etc/sudoers.d/ force=no
 
   - name: JENKINS | start jenkins
     service:
