@@ -15,5 +15,5 @@ Next actions are made automatically by running "vagrant up" from vagrant dir:
 [provision.yml](/vagrant/ansible/provision.yml)
 
 ![Alt text](resources/jenkins.png "scr1")
-![Alt text](resources/pipeline.png "scr2)
+![Alt text](resources/pipeline.png "scr2")
 ![Alt text](resources/app-server.png "scr1")
