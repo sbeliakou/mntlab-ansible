@@ -8,6 +8,7 @@
             - tomcat
             - tomcat-webapps
             - java-1.7.0-openjdk-devel
+            - git
        notify: tomcat enabled
      - copy: src=server.xml dest=/etc/tomcat/
      - name: install nginx repo
