@@ -18,7 +18,7 @@
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>vitali_shulhach</name>
+        <name>*/vitali_shulhach</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -64,8 +64,7 @@
     </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers/>
-  <prebuilders/>
-  <postbuilders>
+  <prebuilders>
     <hudson.tasks.Shell>
       <command>datetime=$(date)
 echo $datetime&gt;src/main/resources/build-info.txt
@@ -73,8 +72,12 @@ echo &quot;${GIT_URL}&quot;&gt;&gt;src/main/resources/build-info.txt
 echo &quot;${GIT_COMMIT}&quot;&gt;&gt;src/main/resources/build-info.txt
 echo &quot;${GIT_BRANCH}&quot;&gt;&gt;src/main/resources/build-info.txt
 echo $datetime&gt;&gt;src/main/resources/build-info.txt
-cat src/main/resources/build-info.txt
-
+cat src/main/resources/build-info.txt</command>
+    </hudson.tasks.Shell>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>
 </command>
     </hudson.tasks.Shell>
   </postbuilders>

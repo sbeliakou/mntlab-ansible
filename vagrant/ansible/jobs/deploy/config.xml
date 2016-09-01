@@ -23,8 +23,6 @@ echo $BUILD_NUMBER&gt;/var/lib/tomcat/webapps/deploy-info.txt
 echo $JOB_NAME&gt;&gt;/var/lib/tomcat/webapps/deploy-info.txt
 cat /var/lib/tomcat/webapps/deploy-info.txt
 datetime=$(date)
-cat /var/lib/jenkins/workspace/build/src/main/resources/build-info.txt&gt;&gt;/var/lib/tomcat/webapps/deploy-info.txt
-
 mv -f /var/lib/jenkins/workspace/build/target/mnt-lab.war /usr/share/tomcat/webapps</command>
     </hudson.tasks.Shell>
   </builders>
