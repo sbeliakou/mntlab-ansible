@@ -1,0 +1,93 @@
+- name: Provision with Ansible
+  hosts: all
+  become: yes
+  
+  vars:
+    services_info: |
+      Jenkins URL - http://localhost:8080/jenkins/
+      Jenkins Delivery - http://localhost:8080/jenkins/view/Pet%20CD/
+      Application URL - http://localhost:8080/mnt-lab/
+
+  pre_tasks:
+  - debug: msg="Let's do this"
+
+  tasks:
+  - debug: msg="Will install Java"
+  - name: Ensure Java is installed.
+    yum: name=java-1.7.0-openjdk-devel state=installed
+
+  - debug: msg="Will set nginx repo"
+  - name: NGINX | Installing NGINX repo rpm
+    yum:
+      name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+
+  - debug: msg="Will install NGINX"
+  - name: NGINX | Installing NGINX repo rpm
+    yum:
+      name: nginx
+      state: latest
+
+  - name: Copying config
+    template: src=src/vhosts.conf dest=/etc/nginx/conf.d/vhosts.conf
+    
+  - debug: msg="Will install tomcat"
+  - name: Install tomcat
+    yum: name=tomcat state=latest 
+    yum: name=tomcat-webapps state=latest
+
+  - name: Copying config
+    template: src=src/server.xml dest=/usr/share/tomcat/conf/server.xml  
+
+  - name: jenkins wget
+    command: wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+
+  - name: jenkins rpm
+    command: rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+
+  - name: jenkins install
+    yum: name=jenkins
+
+#  - name: Copying config
+#    copy: src=src/config.xml dest=/var/lib/jenkins/config.xml
+
+  - name: Copying plugins
+    copy: src=src/plugins dest=/var/lib/jenkins/plugins/
+
+  - name: Copying sudoers file
+    template: src=src/jenkins-user dest=/etc/sudoers.d/ force=no
+
+  - name: Copying Maven
+    template: src=src/hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+
+  - name: Copying jobs
+    copy: src=src/jobs dest=/var/lib/jenkins/jobs/ force=no
+
+  - name: Copying sysconfig jenkins
+    template: src=src/jenkins dest=/etc/sysconfig/jenkins
+
+  - name: Changing Jenkins home directory ownership
+    file: path=/var/lib/jenkins owner=jenkins group=jenkins state=directory recurse=yes
+
+  - name: NGINX | Starting NGINX
+    service:
+      name: nginx
+      state: started
+
+  - name: Start jenkins
+    service:
+      name: jenkins
+      state: started
+      enabled: yes
+
+  - name: Start tomcat
+    service: name=tomcat state=started enabled=yes
+
+
+#  roles:
+#  - java
+#  - jenkins
+#  - tomcat
+#  - web
+
+  post_tasks:
+  - debug: var=services_info.split('\n')
