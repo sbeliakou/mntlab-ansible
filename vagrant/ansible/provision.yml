@@ -13,8 +13,6 @@
 
   tasks:
 
-  - name: Installing NGINX repo rpm
-    yum: "name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm"
   - name: downloading jenkins repo
     get_url: url=http://pkg.jenkins.io/redhat-stable/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
   - name: jenkins repo key
@@ -22,40 +20,37 @@
 
   - name: Instaling packages
     yum: name={{ item.name }} state={{ item.state| default("latest") }}
-    with_items: 
-      - {name: "java-1.7.0-openjdk-devel", state: present}
-      - {name: nginx} 
-      - {name: tomcat} 
-      - {name: jenkins} 
-      - {name: git}
-      - {name: tomcat-webapps}
+    with_items:
+      - {name: "http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm", state: "installed"} 
+      - {name: "java-1.7.0-openjdk-devel", state: "present"}
+      - {name: "nginx"} 
+      - {name: "tomcat"} 
+      - {name: "jenkins"} 
+      - {name: "git"}
+      - {name: "tomcat-webapps"}
 
-  - name: changing nginx config
-    copy: src=virtual.conf dest=/etc/nginx/conf.d/virtual.conf
-  - name: NGINX | Starting NGINX
-    service: name=nginx state=started enabled=yes
+  - name: copying config files
+    copy: src={{ item.src }} dest={{ item.dest }} force={{ item.force| default("yes")}}
+    with_items:
+      - {src: "virtual.conf", dest: "/etc/nginx/conf.d/"}
+      - {src: "server.xml", dest: "/usr/share/tomcat/conf/"}
+      - {src: "jenkins", dest: "/etc/sysconfig/"}
+      - {src: "config.xml", dest: "/var/lib/jenkins/"}
+      - {src: "hudson.tasks.Maven.xml", dest: "/var/lib/jenkins/"}
+      - {src: "plugins", dest: "/var/lib/jenkins", force: "no"}
+      - {src: "jobs", dest: "/var/lib/jenkins", force: "no"}
 
-  - name: copying tomcat config
-    copy: src=server.xml dest=/usr/share/tomcat/conf/server.xml
-  - name: Starting Tomcat
-    service: name=tomcat state=started enabled=yes
-
-  - name: changing jenkins group
+  - name: JENKINS | changing jenkins user group
     user: name=jenkins groups=tomcat
-  - name: Copy config
-    template: src=jenkins dest=/etc/sysconfig/jenkins
-  - name: cp xml
-    template: src=config.xml dest=/var/lib/jenkins/config.xml owner=jenkins group=jenkins
-  - name: copying plugins
-    copy: src=plugins dest=/var/lib/jenkins owner=jenkins group=jenkins force=no
-  - name: copy maven
-    copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins/ owner=jenkins group=jenkins force=no
-  - name: Jobs for Jenkins
-    copy: src=jobs dest=/var/lib/jenkins force=no
-  - name: chown
+  - name: JENKINS | chown
     file: path=/var/lib/jenkins owner=jenkins group=jenkins recurse=yes
-  - name: jenkins start
-    service: name=jenkins state=started enabled=yes
+
+  - name: starting services
+    service: name={{ item }} state=started enabled=yes
+    with_items:
+      - nginx
+      - tomcat
+      - jenkins
 
   post_tasks:
   - debug: var=services_info.split('\n')
