@@ -31,7 +31,7 @@
      - copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins
      - file: path=/var/lib/jenkins owner=jenkins group=jenkins recurse=yes
      - file: path=/var/lib/tomcat/webapps mode=0777
-     - name: JENKINS | Starting Jenkins
+     - name: Starting Jenkins after copy jobs
        service: name=jenkins state=running
   handlers:
      - name: nginx enabled
