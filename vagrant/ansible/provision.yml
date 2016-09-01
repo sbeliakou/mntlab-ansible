@@ -29,6 +29,7 @@
      - copy: src=plugins dest=/var/lib/jenkins
      - copy: src=jobs dest=/var/lib/jenkins
      - copy: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins
+     - file: path=/var/lib/jenkins owner=jenkins group=jenkins recurse=yes
      - file: path=/var/lib/tomcat/webapps mode=0777
   handlers:
      - name: nginx enabled
