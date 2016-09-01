@@ -2,20 +2,49 @@
   hosts: all
   become: yes
 
-  vars:
-    services_info: |
-      Jenkins URL - http://localhost:8080/jenkins/
-      Jenkins Delivery - http://localhost:8080/jenkins/view/Pet%20CD/
-      Application URL - http://localhost:8080/mnt-lab/
+  tasks:
+   - name: Java install
+     yum: name=java-1.7.0-openjdk-devel state=installed
+   - name: Git
+     yum: name=git state=latest
+   - name: NGINX | Installing NGINX repo rpm
+     yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+   - name: Nginx | Nginx install
+     yum: name=nginx state=latest
+   - name: Copy config
+     template: src=virtual.conf dest=/etc/nginx/conf.d/virtual.conf
+   - name: NGINX | Starting nginx
+     service: name=nginx state=running
 
-  pre_tasks:
-  - debug: msg="Let's do this"
+   - name: TOMCAT | Installing Tomcat
+     yum: name=tomcat state=latest
+   - name: TOMCAT | Installing Tomcat-webapps
+     yum: name=tomcat-webapps state=latest
+   - name: Copy config
+     template: src=server.xml dest=/etc/tomcat/server.xml
+   - name: TOMCAT | Starting Tomcat
+     service: name=tomcat state=running
 
-  roles:
-  - java
-  - jenkins
-  - tomcat
-  - web
+   - name: Copying Jenkins-user sudoers file
+     copy: src=jenkins-user dest=/etc/sudoers.d/ force=no
 
-  post_tasks:
-  - debug: var=services_info.split('\n')
+   - name: JENKINS | wget Jenkins repo
+     command: wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+   - name: JENKINS | Insatalling Jenkins rpm
+     command: rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+   - name: JENKINS | Installing Jenkins
+     yum: name=jenkins 
+   - name: Copy config
+     template: src=jenkins dest=/etc/sysconfig/jenkins
+   - name: cp xml
+     template: src=config.xml dest=/var/lib/jenkins/config.xml
+   - name: Jobs for Jenkins
+     copy: src=jobs dest=/var/lib/jenkins/ force=no
+   - name: Plugins for Jenkins
+     copy: src=plugins dest=/var/lib/jenkins/ force=no
+   - name: maven jenkins
+     template: src=hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+   - name: chown
+     command: chown -R jenkins.jenkins /var/lib/jenkins
+   - name: JENKINS | Starting Jenkins
+     service: name=jenkins state=running 
