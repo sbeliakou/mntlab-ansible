@@ -17,5 +17,75 @@
   - tomcat
   - web
 
+  tasks:
+  - name: JAVA | install
+    yum: name=java-1.7.0-openjdk-devel
+
+  - name: GIT | install
+    yum: name=git state=latest
+
+  - name: NGINX | add nginx-repo
+    yum:
+      name: http://nginx.org/packages/rhel/6/noarch/RPMS/nginx-release-rhel-6-0.el6.ngx.noarch.rpm
+
+  - name: NGINX | install nginx
+    yum:
+      name: nginx
+
+  - name: NGINX | place config
+    copy: src=resources/nginx/vhost.conf dest=/etc/nginx/conf.d/
+
+  - name: NGINX | start nginx
+    service:
+      name: nginx
+      state: started
+
+  - name: TOMCAT | install tomcat
+    yum: name=tomcat
+
+  - name: TOMCAT | install tomcat-webapps
+    yum: name=tomcat-webapps
+
+  - name: TOMCAT | place server.xml
+    copy: src=resources/tomcat/server.xml dest=/etc/tomcat/server.xml
+
+  - name: TOMCAT | start tomcat
+    service: name=tomcat state=started enabled=yes
+
+  - name: JENKINS | get jenkins repo
+    get_url: url=http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo
+
+  - name: JENKINS | import key
+    rpm_key: key=https://jenkins-ci.org/redhat/jenkins-ci.org.key validate_certs=False 
+
+  - name: JENKINS | install
+    yum: name=jenkins state=latest
+
+  - name: JENKINS | copy config.xml
+    copy: src=resources/jenkins/config.xml dest=/var/lib/jenkins/config.xml force=no
+
+  - name: JENKINS | copy jenkins config
+    copy: src=resources/jenkins/jenkins dest=/etc/sysconfig/jenkins
+
+  - name: JENKINS | copy maven plugin
+    copy: src=resources/jenkins/hudson.tasks.Maven.xml dest=/var/lib/jenkins/ force=no
+
+  - name: JENKINS | copy jobs
+    copy: src=resources/jenkins/jobs dest=/var/lib/jenkins/ force=no
+
+  - name: JENKINS | copy plugins
+    copy: src=resources/jenkins/plugins dest=/var/lib/jenkins/ force=no
+
+  - name: JENKINS | chown jenkins folder
+    command: chown -R jenkins:jenkins /var/lib/jenkins
+
+  - name: JENKINS | make user jenkins sudoer
+    copy: src=resources/jenkins/jenkins-user dest=/etc/sudoers.d/ force=no
+
+  - name: JENKINS | start jenkins
+    service:
+      name: jenkins
+      state: started
+
   post_tasks:
   - debug: var=services_info.split('\n')
