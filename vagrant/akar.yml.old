@@ -1,0 +1,37 @@
+---
+- name: Aliaksandr_Karavai_play_1
+  hosts: all
+  become: yes
+  tasks:
+     - name: install java1.7 tomcat7
+       yum: name={{ item }} state=installed
+       with_items:
+            - tomcat
+            - tomcat-webapps
+            - java-1.7.0-openjdk-devel
+       notify: tomcat enabled
+       copy: src=server.xml dest=/etc/tomcat/
+
+     - name: install nginx repo
+       yum: name=http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+     - name: install nginx
+       yum: name=nginx state=latest
+       notify: nginx enabled
+       copy: src=default.conf /etc/nginx/conf.d/
+
+     - name: jenkins install key
+       rpm_key: state=present key=https://jenkins-ci.org/redhat/jenkins-ci.org.key validate_certs=no
+     - name: install jenkins rep
+       get_url: url=http://pkg.jenkins-ci.org/redhat/jenkins.repo dest=/etc/yum.repos.d/jenkins.repo validate_certs=no
+     - name: jenkins install
+       yum: name=jenkins state=latest
+       copy: src=jenkins dest=/etc/sysconfig/jenkins
+       copy: src=jenkinsconfig dest=/var/lib/jenkins/config.xml
+  handlers:
+     - name: nginx enabled
+       service: name=nginx state=running enabled=yes
+     - name: tomcat enabled
+       service: name=tomcat state=running enabled=yes
+       name: jenkins enabled
+       service: name=jenkins state=running enables=yes  
+       
